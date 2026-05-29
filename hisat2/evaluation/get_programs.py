@@ -112,7 +112,7 @@ def get_aligners():
             cmd += "; source ./source_me.sh; make; cp bin/%s ../bin; cd .." % (program)
         else:
             assert False
-        print >> sys.stderr, cmd
+        print(cmd, file=sys.stderr)
         os.system(cmd)
 
     files = ["hisat2", "hisat2-align-s", "hisat2-build", "hisat2-build-s", "hisat2-inspect", "hisat2-inspect-s", "extract_splice_sites.py", "hisat2_extract_snps_haplotypes_UCSC.py", "hisat2_simulate_reads.py"]
@@ -120,6 +120,7 @@ def get_aligners():
     for file in files:
         if os.path.exists(file):
             continue
+        print("ln -s ../../../%s %s" % (file, file), file=sys.stderr)
         os.system("ln -s ../../../%s %s" % (file, file))
     os.chdir("..")
     

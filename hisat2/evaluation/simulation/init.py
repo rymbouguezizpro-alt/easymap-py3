@@ -2,6 +2,7 @@
 
 import sys, os
 import string, re
+from functools import cmp_to_key
 
 use_message = '''
 '''
@@ -50,7 +51,7 @@ def extract_pair(RNA):
 
                     if p_str not in pair_reported:
                         pair_reported.add(p_str)
-                        print >> out_file, p_str
+                        print (p_str, file=out_file)
 
         if not me in read_dic:
             read_dic[me] = []
@@ -83,8 +84,8 @@ def init_reads(read_dir, RNA):
             elif field.startswith("Zs"):
                 Zs = "\t" + field
 
-        print >> (sim1_file if left_read else sim2_file), \
-            "%s\t%s\t%s\t%s%s%s%s" % (read_id, chr, pos, cigar, TI, NM, Zs)
+        print ((sim1_file if left_read else sim2_file), \
+            "%s\t%s\t%s\t%s%s%s%s" % (read_id, chr, pos, cigar, TI, NM, Zs))
 
     sim1_file.close()
     sim2_file.close()
@@ -262,7 +263,7 @@ def classify_reads(RNA):
 
                 if readtype == "all" or readtype == readtype2:
                     read_ids.add(read_id)
-                    print >> type_sam_file, line[:-1]
+                    print (line[:-1], file=type_sam_file)
                     junctions += get_junctions(chr, int(pos), cigar)
                     if paired:
                         junctions += get_junctions(chr2, int(pos2), cigar2)
@@ -280,12 +281,12 @@ def classify_reads(RNA):
                 junctions.append(to_junction(junction_str))
 
             # sort the list of junctions
-            junctions = sorted(junctions, cmp=junction_cmp)
+            junctions = sorted(junctions, key=cmp_to_key(junction_cmp))
 
             # write the junctions into a file
             type_junction_file = open(type_junction_fname, "w")
             for junction in junctions:
-                print >> type_junction_file, "%s\t%d\t%d" % (junction[0], junction[1], junction[2])
+                print ("%s\t%d\t%d" % (junction[0], junction[1], junction[2]), file=type_junction_file)
             type_junction_file.close()
 
             def write_reads(read_fname, type_read_fname):
@@ -299,7 +300,7 @@ def classify_reads(RNA):
                         write = read_id in read_ids
 
                     if write:
-                        print >> type_read_file, line[:-1]
+                        print (line[:-1], file=type_read_file)
 
                 read_file.close()
                 type_read_file.close()
@@ -323,7 +324,7 @@ def init():
                 not os.path.exists(read_dir_base + read_dir + "/sim_2.fa"):
             continue
 
-        print >> sys.stderr, "Processing", read_dir, "..."
+        print ("Processing", read_dir, "...", file=sys.stderr)
 
         os.mkdir(read_dir)
         os.chdir(read_dir)

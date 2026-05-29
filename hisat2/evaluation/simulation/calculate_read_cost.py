@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from functools import cmp_to_key
 import sys, os, subprocess
 import multiprocessing
 import string, re
@@ -204,7 +205,7 @@ def read_repeatdb(repeat_filename):
 
             repeat_pos_list.append((repeat_right, repeatName))
 
-        repeat_map[rptRefName] = sorted(repeat_pos_list, cmp=cmp_repeatmap)
+        repeat_map[rptRefName] = sorted(repeat_pos_list, key=cmp_to_key(cmp_repeatmap))
         #print repeat_map[rptRefName]
 
     return repeat_db, repeat_map
@@ -389,7 +390,7 @@ def read_repeat_info(repeat_filename):
                 return a[2] - b[2]
             else:
                 return 1
-        repeat_info[rep] = sorted(repeat_info[rep], cmp=my_cmp)
+        repeat_info[rep] = sorted(repeat_info[rep], key=cmp_to_key(my_cmp))
 
     return repeat_info, repeat_dic
 
@@ -402,7 +403,7 @@ def find_repeat(repeat_info, pos):
     
     l, r = 0, len(repeat_info)
     while l < r:
-        m = (l + r) / 2
+        m = (l + r) // 2
         _, rep_pos, rep_len, _ = repeat_info[m]
         if rep_pos <= pos and pos < rep_pos + rep_len:
             return m
@@ -1399,9 +1400,9 @@ def compare_single_sam(RNA,
                     if len(junction_read_dic[junction_str]) <= 2:
                         canonical = is_canonical_junction(chr_dic, to_junction(junction_str))
                         if not canonical:
-                            print >> sys.stdout, read_name, junction_str, len(junction_read_dic[junction_str]), can_junctions
+                            print (read_name, junction_str, len(junction_read_dic[junction_str]), can_junctions, file=sys.stdout)
                             for line in junction_read_dic[junction_str]:
-                                print >> sys.stdout, "\t", line
+                                print ("\t", line, file=sys.stdout)
                     """
                 temp_junctions.add(junction_str)
 
@@ -1409,7 +1410,7 @@ def compare_single_sam(RNA,
     temp2_junctions = []
     for junction in temp_junctions:
         temp2_junctions.append(to_junction(junction))
-    temp_junctions = sorted(list(temp2_junctions), cmp=junction_cmp)
+    temp_junctions = sorted(list(temp2_junctions), key=cmp_to_key(junction_cmp))
     temp2_junctions = []
     for can_junction in temp_junctions:
         if len(temp2_junctions) <= 0:
@@ -1639,9 +1640,9 @@ def compare_paired_sam(RNA,
                 if junction_str not in temp_junctions:
                     None
                     # assert junction_str in junction_read_dic
-                    # print >> sys.stdout, read_name, junction_str, len(junction_read_dic[junction_str])
+                    # print (read_name, junction_str, len(junction_read_dic[junction_str]), file=sys.stdout)
                     # for line in junction_read_dic[junction_str]:
-                    #     print >> sys.stdout, "\t", line
+                    #     print ("\t", line, file=sys.stdout)
 
                 temp_junctions.add(junction_str)
 
@@ -1651,7 +1652,7 @@ def compare_paired_sam(RNA,
     temp2_junctions = []
     for junction in temp_junctions:
         temp2_junctions.append(to_junction(junction))
-    temp_junctions = sorted(list(temp2_junctions), cmp=junction_cmp)
+    temp_junctions = sorted(list(temp2_junctions), key=cmp_to_key(junction_cmp))
     temp2_junctions = []
     for can_junction in temp_junctions:
         if len(temp2_junctions) <= 0:
@@ -1855,7 +1856,7 @@ def sql_execute(sql_db, sql_query):
         "-separator", "\t",
         "%s;" % sql_query
         ]
-    # print >> sys.stderr, sql_cmd
+    # print (sql_cmd, file=sys.stderr)
     sql_process = subprocess.Popen(sql_cmd, stdout=subprocess.PIPE)
     output = sql_process.communicate()[0][:-1]
     return output

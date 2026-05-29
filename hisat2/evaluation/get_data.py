@@ -21,7 +21,7 @@ def get_data(small = False):
         if os.path.exists(file):
             continue
         wget_cmd = "wget %s/data/%s" % (data_root, file)
-        print >> sys.stderr, wget_cmd
+        print(wget_cmd, file=sys.stderr)
         os.system(wget_cmd)
     os.chdir("..")
 
@@ -42,7 +42,7 @@ def get_data(small = False):
                 continue
             cmd = "wget %s/indexes/%s.tar.gz; tar xvzf %s.tar.gz; rm %s.tar.gz" % \
                 (data_root, aligner_dir, aligner_dir, aligner_dir)
-            print >> sys.stderr, cmd
+            print(cmd, file=sys.stderr)
             os.system(cmd)
     os.chdir("..")
 
@@ -83,7 +83,7 @@ def get_data(small = False):
                 continue
             cmd = "wget %s/reads/%s/%s.tar.gz; tar xvzf %s.tar.gz; rm %s.tar.gz" % \
                 (data_root, type, file, file, file)
-            print >> sys.stderr, cmd
+            print(cmd, file=sys.stderr)
             os.system(cmd)
         os.chdir("..")
     

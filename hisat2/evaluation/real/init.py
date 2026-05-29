@@ -51,7 +51,7 @@ def init():
                  not os.path.exists(read_dir_base + read_dir + "/1.fq"):
                 continue
 
-        print >> sys.stderr, "Processing", read_dir, "..."
+        print("Processing", read_dir, "...", file=sys.stderr)
 
         os.mkdir(read_dir)
         os.chdir(read_dir)
@@ -74,18 +74,18 @@ def init():
 
             if dir_name == "whole":
                 ln_cmd = "ln -s ../../%s%s/%s ." % (read_dir_base, read_dir, fq_1_name)
-                print >> sys.stderr, ln_cmd
+                print(ln_cmd, file=sys.stderr)
                 os.system(ln_cmd)
                 ln_cmd = "ln -s ../../%s%s/%s ." % (read_dir_base, read_dir, fq_2_name)
-                print >> sys.stderr, ln_cmd
+                print(ln_cmd, file=sys.stderr)
                 os.system(ln_cmd)
             else:
                 cmd = make_cat_cmd(gz_file, read_dir_base, read_dir, fq_1_name, num_reads)
-                print >> sys.stderr, cmd
+                print(cmd, file=sys.stderr)
                 os.system(cmd)
 
                 cmd = make_cat_cmd(gz_file, read_dir_base, read_dir, fq_2_name, num_reads)
-                print >> sys.stderr, cmd
+                print(cmd, file=sys.stderr)
                 os.system(cmd)
 
             os.system("ln -s ../../calculate_read_cost.py .")

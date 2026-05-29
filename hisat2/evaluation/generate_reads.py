@@ -18,7 +18,7 @@ def shuffle_reads(read_fname, random_list):
     assert len(random_list) == len(reads)
     for i in random_list:
         read = reads[random_list[i]]
-        print >> read_file_out, "\n".join(read)
+        print("\n".join(read), file=read_file_out)
     read_file_out.close()
 
 
@@ -73,11 +73,11 @@ def simulate_reads():
     data_dir_base = "../../../data"
 
     def generate_reads(cmd):
-        print >> sys.stderr, cmd
+        print(cmd, file=sys.stderr)
         os.system(cmd)
 
         random.seed(0)
-        print >> sys.stderr, "shuffle reads sim_1.fa and sim_2.fa"
+        print("shuffle reads sim_1.fa and sim_2.fa", file=sys.stderr)
         shuffle_pairs("sim_1.fa", "sim_2.fa")
         shuffle_reads_cmd = " mv sim_1.fa.shuffle sim_1.fa"
         shuffle_reads_cmd += "; mv sim_2.fa.shuffle sim_2.fa"
@@ -131,11 +131,11 @@ def simulate_reads():
             (cmd_add, numreads, genome_fname, gtf_fname, snp_fname)
 
         """
-        print >> sys.stderr, cmd
+        print(cmd, file=sys.stderr)
         os.system(cmd)
 
         random.seed(0)
-        print >> sys.stderr, "shuffle reads sim_1.fa and sim_2.fa"
+        print("shuffle reads sim_1.fa and sim_2.fa", file=sys.stderr)
         shuffle_pairs("sim_1.fa", "sim_2.fa")
         shuffle_reads_cmd = " mv sim_1.fa.shuffle sim_1.fa"
         shuffle_reads_cmd += "; mv sim_2.fa.shuffle sim_2.fa"

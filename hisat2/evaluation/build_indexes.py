@@ -47,7 +47,7 @@ def build_indexes():
                 assert False
             else:
                 assert False
-            print >> sys.stderr, cmd
+            print(cmd, file=sys.stderr)
             os.system(cmd)
             os.chdir("..")
 
