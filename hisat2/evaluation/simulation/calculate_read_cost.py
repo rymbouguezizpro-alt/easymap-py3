@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-from functools import cmp_to_key
 import sys, os, subprocess
 import multiprocessing
 import string, re
 import platform
+from functools import cmp_to_key
 from datetime import datetime, date, time
 import copy
 from argparse import ArgumentParser, FileType
@@ -623,7 +623,7 @@ def repeat_to_genome_alignment(repeat_info, repeat_dic, rep, pos, cigar_str = ""
     repeats = repeat_info[rep]
     l, r = 0, len(repeats)
     while l < r:
-        m = (l + r) / 2
+        m = (l + r) // 2
         rep_allele, rpos, rlen = repeats[m]
         if left >= rpos and left < rpos + rlen:
             while m > 0:
@@ -1400,9 +1400,9 @@ def compare_single_sam(RNA,
                     if len(junction_read_dic[junction_str]) <= 2:
                         canonical = is_canonical_junction(chr_dic, to_junction(junction_str))
                         if not canonical:
-                            print (read_name, junction_str, len(junction_read_dic[junction_str]), can_junctions, file=sys.stdout)
+                            print(read_name, junction_str, len(junction_read_dic[junction_str]), can_junctions, file=sys.stdout)
                             for line in junction_read_dic[junction_str]:
-                                print ("\t", line, file=sys.stdout)
+                                print("\t", line, file=sys.stdout)
                     """
                 temp_junctions.add(junction_str)
 
@@ -1640,9 +1640,9 @@ def compare_paired_sam(RNA,
                 if junction_str not in temp_junctions:
                     None
                     # assert junction_str in junction_read_dic
-                    # print (read_name, junction_str, len(junction_read_dic[junction_str]), file=sys.stdout)
+                    # print(read_name, junction_str, len(junction_read_dic[junction_str]), file=sys.stdout)
                     # for line in junction_read_dic[junction_str]:
-                    #     print ("\t", line, file=sys.stdout)
+                    #     print("\t", line, file=sys.stdout)
 
                 temp_junctions.add(junction_str)
 
@@ -1856,7 +1856,7 @@ def sql_execute(sql_db, sql_query):
         "-separator", "\t",
         "%s;" % sql_query
         ]
-    # print (sql_cmd, file=sys.stderr)
+    #print("\t", sql_cmd, file=sys.stderr)
     sql_process = subprocess.Popen(sql_cmd, stdout=subprocess.PIPE)
     output = sql_process.communicate()[0][:-1]
     return output
@@ -2625,7 +2625,7 @@ def calculate_read_cost(single_end,
                             = compare_single_sam(RNA, out_fname2, "../" + type_sam_fname2, mapped_id_fname, chr_dic, junctions, junctions_set, gtf_junctions)
                     proc = subprocess.Popen(["wc", "-l", "../" + type_read_fname2], stdout=subprocess.PIPE)
                     out = proc.communicate()[0]
-                    numreads = int(out.split()[0]) / 2
+                    numreads = int(out.split()[0]) // 2
                     assert mapped + unmapped == numreads
                     
                     if two_step:
