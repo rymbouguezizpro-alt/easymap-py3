@@ -73,7 +73,7 @@ def simulate_reads():
     data_dir_base = "../../../data"
 
     def generate_reads(cmd):
-        print(cmd, file=sys.stderr)
+        (cmd, file=sys.stderr)
         os.system(cmd)
 
         random.seed(0)
@@ -92,9 +92,9 @@ def simulate_reads():
         else:
             molecule = "DNA"
         if numreads >= 1000000:
-            dirname = "%dM_%s" % (numreads / 1000000, molecule)
+            dirname = "%dM_%s" % (numreads // 1000000, molecule)
         else:
-            dirname = "%dk_%s" % (numreads / 1000, molecule)
+            dirname = "%dk_%s" % (numreads // 1000, molecule)
 
         if mismatch:
             dirname += "_mismatch"
