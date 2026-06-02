@@ -5,9 +5,9 @@ import multiprocessing
 import platform
 import string
 import re
-from functools import cmp_to_key
 from datetime import datetime, date, time
 from collections import defaultdict
+from functools import cmp_to_key
 from argparse import ArgumentParser, FileType
 
 osx_mode = False
@@ -26,7 +26,7 @@ def parse_mem_usage(resource):
         resource = resource.strip().split('\n')
         for line in resource:
             if line.find('maximum resident set size') != -1:
-                return int(line.split()[0]) / 1024
+                return int(line.split()[0]) // 1024
     else:
         resource = resource.split(' ')
         for line in resource:
@@ -157,7 +157,7 @@ def extract_splice_sites(gtf_fname):
             trans[transcript_id][2].append([left, right])
 
     gtf_file.close()
-    print("GTF is loaded", file=sys.stderr)
+    
     # Sort exons and merge where separating introns are <=5 bps
     for tran, [chrom, strand, exons] in trans.items():
             exons.sort()
@@ -820,7 +820,7 @@ def pair_stat(pair_filename, gtf_junctions, chr_dic):
 
         # check concordantly
         concord_align, segment_len = is_concordantly(read_id, flag, chr, pos, cigar_str, XM, NM, mate_flag, mate_chr, mate_pos, mate_cigar_str, mate_XM, mate_NM)
-        print(line.strip(),('none', 'first')[(flag & 0x40 == 0x40)],('none', 'last')[(mate_flag & 0x80 == 0x80)],segment_len,file=(con_file if concord_align else discon_file))
+        print(line.strip(), ('none', 'first')[(flag & 0x40 == 0x40)], ('none', 'last')[(mate_flag & 0x80 == 0x80)], segment_len, file=(con_file if concord_align else discon_file))
 
         if junction_pair:
             for junction_str, is_gtf_junction in pair_junctions:
@@ -906,7 +906,7 @@ def sql_execute(sql_db, sql_query):
         ]
     # print(sql_cmd, file=sys.stderr)
     sql_process = subprocess.Popen(sql_cmd, stdout=subprocess.PIPE)
-    output = sql_process.communicate()[0][:-1]
+    output = sql_process.communicate()[0].decode().rstrip()
     return output
 
 
@@ -1442,7 +1442,7 @@ def calculate_read_cost(single_end,
                         dummy_cmd = get_aligner_cmd(RNA, aligner, type, index_type, version, options, "../one.fq", "../two.fq", "/dev/null")
                         start_time = datetime.now()
                         if verbose:
-                            print (start_time, "\t", " ".join(dummy_cmd), file=sys.stderr)
+                            print(start_time, "\t", " ".join(dummy_cmd), file=sys.stderr)
                         if aligner in ["hisat2", "hisat", "bowtie", "bowtie2", "gsnap", "bwa"]:
                             proc = subprocess.Popen(dummy_cmd, stdout=open("/dev/null", "w"), stderr=subprocess.PIPE)
                         else:
@@ -1452,7 +1452,7 @@ def calculate_read_cost(single_end,
                         duration = finish_time - start_time
                         duration = duration.total_seconds()
                         if verbose:
-                            print (finish_time, "duration:", duration, file=sys.stderr)
+                            print(finish_time, "duration:", duration, file=sys.stderr)
                         loading_time = duration
 
                 # align all reads
@@ -1487,7 +1487,7 @@ def calculate_read_cost(single_end,
                         print(finish_time, "duration:", duration, file=sys.stderr)
 
                     if verbose:
-                        print(finish_time, "Memory Usage: %dMB" % (int(mem_usage) / 1024), file=sys.stderr)
+                        print(finish_time, "Memory Usage: %dMB" % (int(mem_usage) // 1024), file=sys.stderr)
 
                     if debug and aligner == "hisat" and type == "x1":
                         os.system("cat metrics.out")
