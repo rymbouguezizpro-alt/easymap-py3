@@ -23,6 +23,7 @@ import sys, os, subprocess, re
 import math
 import random
 from copy import deepcopy
+from functools import cmp_to_key
 from datetime import datetime
 
 
@@ -160,7 +161,7 @@ def compare_vars(a, b):
 def lower_bound(Var_list, pos):
     low, high = 0, len(Var_list)
     while low < high:
-        m = (low + high) / 2
+        m = (low + high) // 2
         m_pos = Var_list[m][0]
         if m_pos < pos:
             low = m + 1
@@ -496,10 +497,7 @@ def simulate_reads(seq_dic,                       # seq_dic["A"]["A*24:36N"] = "
                 if allele_name in allele_list:
                     var_ids.append(var_id)
 
-            def var_cmp(a, b):
-                assert a.startswith("hv") and b.startswith("hv")
-                return int(a[2:]) - int(b[2:])
-            var_ids = sorted(var_ids, cmp=var_cmp)
+            var_ids = sorted(var_ids, key=lambda x: int(x[2:]))
 
             # Build annotated sequence for the allele w.r.t backbone sequence
             add_pos = 0
@@ -862,7 +860,7 @@ def get_pair_interdist(alignview_cmd,
     dist_list = sorted(dist_list)
     dist_avg = sum(dist_list) / max(1, len(dist_list))
     if len(dist_list) > 0:
-        dist_median = dist_list[len(dist_list)/2]
+        dist_median = dist_list[len(dist_list)//2]
     else:
         dist_median = -1
 
@@ -886,19 +884,6 @@ def prob_diff(prob1, prob2):
     return diff
 
 
-"""
-"""
-def Gene_prob_cmp(a, b):
-    if a[1] != b[1]:
-        if a[1] < b[1]:
-            return 1
-        else:
-            return -1
-    assert a[0] != b[0]
-    if a[0] < b[0]:
-        return -1
-    else:
-        return 1
 
 
 """
@@ -1010,7 +995,7 @@ def single_abundance(Gene_cmpt,
     else:
         normalize(Gene_prob)
     Gene_prob = [[allele, prob] for allele, prob in list(Gene_prob.items())]
-    Gene_prob = sorted(Gene_prob, cmp=Gene_prob_cmp)
+    Gene_prob = sorted(Gene_prob, key=lambda x: (-x[1], x[0]))
     return Gene_prob
 
 
@@ -1047,7 +1032,7 @@ def get_alternatives(ref_seq,     # GATAACTAGATACATGAGATAGATTTGATAGATAGATAGATACA
         elif var_type == "insertion":
             var_pos += 1
         rev_Var_list.append([var_pos, var_id])
-    rev_Var_list = sorted(rev_Var_list, cmp=lambda a, b: a[0] - b[0])
+    rev_Var_list = sorted(rev_Var_list, key=lambda a: a[0])
 
     def nextbases(haplotype,
                   left = True,
