@@ -46,7 +46,7 @@ def get_html(url):
                     url]
     proc = subprocess.Popen(download_cmd,
                             stdout=subprocess.PIPE,
-                            stderr=open("/dev/null", 'w'))
+                            stderr=open("/dev/null", 'w'),text=True)
 
     output = ""
     for line in proc.stdout:
