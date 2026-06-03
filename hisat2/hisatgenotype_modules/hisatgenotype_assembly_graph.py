@@ -3,6 +3,7 @@
 import sys
 import math, random
 from datetime import datetime, date, time
+from functools import cmp_to_key
 from collections import deque
 from copy import deepcopy
 
@@ -499,12 +500,7 @@ class Graph:
     def remove_nodes(self, nodes):
         delete_ids = set()
         node_list = [[id, node.left, node.right] for id, node in list(nodes.items())]
-        def node_cmp(a, b):
-            if a[2] != b[2]:
-                return a[2] - b[2]
-            else:
-                return a[1] - b[1]
-        node_list = sorted(node_list, cmp=node_cmp)
+        node_list = sorted(node_list, key=lambda a: (a[2], a[1]))
         for n in range(len(node_list)):
             id, left, right = node_list[n]
             node = nodes[id]
@@ -638,12 +634,7 @@ class Graph:
                     kmer, seq = seq[:k], seq[k:]
                     nodes.append([id_, node.left, node.right, kmer, seq])
                 
-            def node_cmp(a, b):
-                if a[1] != b[1]:
-                    return a[1] - b[1]
-                else:
-                    return a[2] - b[2]
-            nodes = sorted(nodes, cmp=node_cmp)
+            nodes = sorted(nodes, key=lambda a: (a[1], a[2]))
 
             # Generate numerical read IDs
             id_to_num = {}
@@ -985,12 +976,7 @@ class Graph:
         
 
         # Generate a compressed assembly graph
-        def path_cmp(a, b):
-            if a[0] != b[0]:
-                return a[0] - b[0]
-            else:
-                return a[1] - b[1]
-        paths = sorted(paths, cmp=path_cmp)
+        paths = sorted(paths, key=lambda a: (a[0], a[1]))
 
         for p in range(len(paths)):
             if print_msg: print("path:", p, paths[p], file=sys.stderr)
@@ -1318,12 +1304,7 @@ class Graph:
     def get_node_comparison_info(self, node_dic):
         assert len(node_dic) > 0
         nodes = [[id, node.left, node.right] for id, node in list(node_dic.items())]
-        def node_cmp(a, b):
-            if a[1] != b[1]:
-                return a[1] - b[1]
-            else:
-                return a[2] - b[2]
-        nodes = sorted(nodes, cmp=node_cmp)
+        nodes = sorted(nodes, key=lambda a: (a[2], a[1]))
         seqs, colors = [], []
         for p in range(len(self.backbone)):
             nts = set()
@@ -1376,7 +1357,7 @@ class Graph:
     def print_node_comparison(self, node_dic):
         nodes, seqs, colors = self.get_node_comparison_info(node_dic)
         interval = 100
-        for p in range(0, (len(self.backbone) + interval - 1) / interval * interval, interval):
+        for p in range(0, (len(self.backbone) + interval - 1) // interval * interval, interval):
             cur_seqs = []
             for n in range(len(nodes)):
                 id, left, right = nodes[n] # inclusive coordinate
@@ -1587,9 +1568,7 @@ class Graph:
              title = ""):
         assert len(self.nodes) > 0
         nodes = [[id, node.left, node.right] for id, node in list(self.nodes.items())]
-        def node_cmp(a, b):
-            return a[1] - b[1]
-        nodes = sorted(nodes, cmp=node_cmp)
+        nodes = sorted(nodes, key=lambda a: (a[2], a[1]))
         max_right = len(self.backbone)
 
         # display space
